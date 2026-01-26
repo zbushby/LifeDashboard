@@ -1,7 +1,7 @@
-service,status,latency_ms
-Jellyfin,OK,1212
-Immich,OK,827
-Home Assistant,ERROR,0
-QNAP,OK,11
-Weekly Tracker,OK,1237
-Memos,ERROR,0
+date,service,status,latency_ms
+2026-01-24,Jellyfin,OK,1212
+2026-01-24,Immich,OK,827
+2026-01-24,Home Assistant,ERROR,0
+2026-01-24,QNAP,OK,11
+2026-01-24,Weekly Tracker,OK,1237
+2026-01-24,Memos,ERROR,0
