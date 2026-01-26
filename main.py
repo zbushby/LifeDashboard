@@ -3,10 +3,11 @@ import datetime as dt
 from pathlib import Path
 
 import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 
 try:
-    from streamlit_elements import dashboard, elements, html, mui, nivo
+    from streamlit_elements import dashboard, elements, html, mui, nivo, sync
 except Exception:
     st.error("Missing dependency: streamlit-elements. Install with: pip install streamlit-elements")
     st.stop()
@@ -800,7 +801,7 @@ st.markdown(
 )
 
 st.markdown('<div class="section-title">Drag & Drop Overview</div>', unsafe_allow_html=True)
-st.caption("Drag cards by their titles to rearrange.")
+st.caption("Drag cards to rearrange. Layout is saved for this session.")
 
 finance["week_start"] = pd.to_datetime(finance["week_start"])
 finance_sorted = finance.sort_values("week_start")
@@ -859,7 +860,7 @@ bjj_sessions, _ = (
 g_goal = get_goal(weekly_goals, "gym_sessions")
 b_goal = get_goal(weekly_goals, "bjj_sessions")
 
-overview_layout = [
+default_overview_layout = [
     dashboard.Item("weekly_spend", 0, 0, 3, 2),
     dashboard.Item("net_worth", 3, 0, 3, 2),
     dashboard.Item("sleep_avg", 6, 0, 3, 2),
@@ -868,13 +869,16 @@ overview_layout = [
     dashboard.Item("bjj_sessions", 6, 2, 6, 3),
 ]
 
+if "overview_layout" not in st.session_state:
+    st.session_state["overview_layout"] = default_overview_layout
+
 with elements("overview"):
     with dashboard.Grid(
-        overview_layout,
+        st.session_state["overview_layout"],
         cols=12,
         rowHeight=70,
         margin=[8, 8],
-        draggableHandle=".drag-handle",
+        onLayoutChange=sync("overview_layout"),
     ):
         render_drag_card(
             "weekly_spend",
