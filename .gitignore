@@ -1,0 +1,24 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# Data files (large exports, not committed)
+3. Data/apple-health/*.json
+3. Data/finances/*.json
+3. Data/strava/*.json
+3. Data/google-calendar/*.json
+3. Data/investments/*.json
+3. Data/dreaming-spanish/*.json
+
+# Docker
+*.log

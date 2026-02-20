@@ -1,34 +1,56 @@
 # Personal Info
 
-> This file captures who you are and how this workspace supports your work. Claude reads this during `/prime` to understand your role and tailor assistance accordingly.
+## Who I Am
 
----
+**Name:** Zach Bushby
+**Location:** Victoria, Australia
+**Career:** Actuary -- 1 year in life insurance consulting at KPMG
 
-## How This Connects
+## Goals
 
-- **business-info.md** sets the organizational stage
-- **This file** defines your place within it
-- **strategy.md** outlines what you're working toward
-- **current-data.md** provides metrics that inform decisions
+### Health and Body Composition
+- Target body fat: below 12%
+- Target weight: 70kg at that body composition
+- These are tracked weekly via Apple Health (Health Auto Export app)
 
----
+### Fitness
+- BJJ: train consistently 3 sessions per week
+- Gym: track weekly volume (via Hevy -> Strava)
 
-## Your Role
+### Studying
+- Target: 14 hours per week
+- Tracked via Forest app -> Apple Health mindfulness minutes
 
-[Describe your title, function, and primary responsibilities. What are you accountable for? What decisions do you make?]
-
-## Key Responsibilities
-
-[List the core areas you manage or contribute to. These help Claude understand what kinds of tasks are relevant to your work.]
-
--
--
--
+### Finances
+- No specific savings target -- save whatever is possible
+- Investments: CMC Markets trades logged manually in Google Sheets
+- Banking: Up Bank (API token available)
 
 ## How This Workspace Helps
 
-[Describe what you want to use this workspace for. What recurring tasks, analyses, or decisions could Claude assist with?]
+- Claude Code builds the Life Dashboard module by module
+- Each Sunday, Zach reviews the dashboard to see how the week went
+- Context files mean each new Claude session starts fully informed -- no re-explaining
 
----
+## Technical Background
 
-_Keep this concise — enough for Claude to understand your context, not an exhaustive biography._
+- Comfortable with Python
+- Has existing Up Bank API code (to integrate in Finances module)
+- Has existing Dreaming Spanish scraper code (to locate and integrate)
+- Familiar with Docker
+
+## Key Accounts and Services
+
+- **Bank:** Up Bank (Australia) -- API token available
+- **Investments:** CMC Markets -- trades logged manually in Google Sheets
+- **Health:** Apple Health + Health Auto Export iOS app
+- **Fitness:** Hevy (gym) -> auto-posts to Strava | BJJ via Google Calendar automation
+- **Calendar:** Google Calendar -- BJJ automations already set up + birthdays calendar
+- **Language learning:** Dreaming Spanish
+- **Study tracking:** Forest app -> Apple Health mindfulness minutes
+- **Email:** Gmail
+- **Infrastructure:** Proxmox on desktop, Docker Compose, home network
+
+## Current Module Status
+
+See `context/module-roadmap.md` for live build status.

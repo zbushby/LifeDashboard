@@ -6,9 +6,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-This is a **Claude Workspace Template** — a structured environment designed for working with Claude Code as a powerful agent assistant across sessions. The user will spin up fresh Claude Code sessions repeatedly, using `/prime` at the start of each to load essential context without bloat.
+This is the **Life Dashboard** -- a self-hosted weekly summary dashboard that aggregates
+personal data from multiple services (Apple Health, Up Bank, Strava, Google Calendar,
+Google Sheets, Dreaming Spanish) into a single beautiful Plotly Dash interface.
+Viewed on Sunday evenings via the home network at http://[proxmox-ip]:8050.
+Built module by module in Python. Each module delivers both the data pipeline and the
+dashboard view in the same session.
 
-**This file (CLAUDE.md) is the foundation.** It is automatically loaded at the start of every session. Keep it current — it is the single source of truth for how Claude should understand and operate within this workspace.
+**Infrastructure:** Docker Compose on Proxmox (desktop) | Port 8050 | Fully self-hosted
+
+**Context files (read by `/prime`):**
+- `context/personal-info.md` -- who the user is and workspace goals
+- `context/project.md` -- full project description
+- `context/data-sources.md` -- every data source, connection method, and build status
+- `context/tech-stack.md` -- tech stack decisions and architecture
+- `context/module-roadmap.md` -- module build order and current status
+
+**To start a new build session:** Run `/prime`, check `context/module-roadmap.md`
+for the next module, then run `/create-plan [module-name]` to plan it.
 
 ---
 
@@ -16,8 +31,8 @@ This is a **Claude Workspace Template** — a structured environment designed fo
 
 Claude operates as an **agent assistant** with access to the workspace folders, context files, commands, and outputs. The relationship is:
 
-- **User**: Defines goals, provides context about their role/function, and directs work through commands
-- **Claude**: Reads context, understands the user's objectives, executes commands, produces outputs, and maintains workspace consistency
+- **User (Zach)**: Defines goals, directs work through commands, provides credentials when needed
+- **Claude**: Reads context, understands objectives, executes commands, produces outputs, maintains workspace consistency
 
 Claude should always orient itself through `/prime` at session start, then act with full awareness of who the user is, what they're trying to achieve, and how this workspace supports that.
 
@@ -26,30 +41,36 @@ Claude should always orient itself through `/prime` at session start, then act w
 ## Workspace Structure
 
 ```
-.
-├── CLAUDE.md              # This file — core context, always loaded
-├── .claude/
-│   └── commands/          # Slash commands Claude can execute
-│       ├── prime.md       # /prime — session initialization
-│       ├── create-plan.md  # /create-plan — create implementation plans
-│       └── implement.md   # /implement — execute plans
-├── context/               # Background context about the user and project
-│                          # (User should populate with role, goals, strategies)
-├── plans/                 # Implementation plans created by /create-plan
-├── outputs/               # Work products and deliverables
-├── reference/             # Templates, examples, reusable patterns
-└── scripts/               # Automation scripts (if applicable)
+LifeDashboard/
+  CLAUDE.md                   - This file, core context, always loaded
+  .env                        - Secrets (gitignored -- never commit)
+  .env.example                - Template showing all required env variables
+  .gitignore                  - Gitignores .env, data exports, __pycache__ etc
+  docker-compose.yml          - Docker Compose stack (created in skeleton plan)
+  .claude/commands/           - Slash commands
+    prime.md                  - /prime: session initialization
+    create-plan.md            - /create-plan: create implementation plans
+    implement.md              - /implement: execute plans
+  context/                    - Project context, read by /prime
+    personal-info.md          - User profile and goals
+    project.md                - Life Dashboard description
+    data-sources.md           - All data sources and connection methods
+    tech-stack.md             - Tech stack decisions
+    module-roadmap.md         - Build order and status (update after each module)
+  plans/                      - Implementation plans (one per module)
+  2. Dashboard/               - Dash app (app.py, layouts/, assets/)
+  3. Data/                    - Data files written by sync scripts
+    apple-health/             - JSON from Health Auto Export webhook
+    finances/                 - Up Bank transaction cache
+    investments/              - Google Sheets portfolio cache
+    strava/                   - Strava activity cache
+    google-calendar/          - Calendar events cache
+    dreaming-spanish/         - Dreaming Spanish scraped data
+  modules/                    - Data fetch and processing scripts (one per source)
+  config/                     - Google OAuth credentials (gitignored)
+  scripts/                    - Utility scripts
+  1. Archive/                 - Old code, ignore entirely
 ```
-
-**Key directories:**
-
-| Directory    | Purpose                                                                             |
-| ------------ | ----------------------------------------------------------------------------------- |
-| `context/`   | Who the user is, their role, current priorities, strategies. Read by `/prime`.      |
-| `plans/`     | Detailed implementation plans. Created by `/create-plan`, executed by `/implement`. |
-| `outputs/`   | Deliverables, analyses, reports, and work products.                                 |
-| `reference/` | Helpful docs, templates and patterns to assist in various workflows.                |
-| `scripts/`   | Any automation or tooling scripts.                                                  |
 
 ---
 
@@ -61,17 +82,18 @@ Claude should always orient itself through `/prime` at session start, then act w
 
 Run this at the start of every session. Claude will:
 
-1. Read CLAUDE.md and context files
-2. Summarize understanding of the user, workspace, and goals
+1. Read CLAUDE.md and all context/ files
+2. Summarize understanding of the project, current module status, and next steps
 3. Confirm readiness to assist
 
 ### /create-plan [request]
 
 **Purpose:** Create a detailed implementation plan before making changes.
 
-Use when adding new functionality, commands, scripts, or making structural changes. Produces a thorough plan document in `plans/` that captures context, rationale, and step-by-step tasks.
+Use before building each module or making structural changes. Produces a thorough plan
+document in `plans/` that captures context, rationale, and step-by-step tasks.
 
-Example: `/create-plan add a competitor analysis command`
+Example: `/create-plan apple-health-module`
 
 ### /implement [plan-path]
 
@@ -79,7 +101,7 @@ Example: `/create-plan add a competitor analysis command`
 
 Reads the plan, executes each step in order, validates the work, and updates the plan status.
 
-Example: `/implement plans/2026-01-28-competitor-analysis-command.md`
+Example: `/implement plans/2026-02-20-apple-health-module.md`
 
 ---
 
@@ -87,43 +109,31 @@ Example: `/implement plans/2026-01-28-competitor-analysis-command.md`
 
 **Whenever Claude makes changes to the workspace, Claude MUST consider whether CLAUDE.md needs updating.**
 
-After any change — adding commands, scripts, workflows, or modifying structure — ask:
+After any change, ask:
 
-1. Does this change add new functionality users need to know about?
-2. Does it modify the workspace structure documented above?
-3. Should a new command be listed?
-4. Does context/ need new files to capture this?
+1. Does this change modify the workspace structure documented above?
+2. Does it add a new command, module, or pattern?
+3. Should `context/module-roadmap.md` be updated?
 
-If yes to any, update the relevant sections. This file must always reflect the current state of the workspace so future sessions have accurate context.
-
-**Examples of changes requiring CLAUDE.md updates:**
-
-- Adding a new slash command → add to Commands section
-- Creating a new output type → document in Workspace Structure or create a section
-- Adding a script → document its purpose and usage
-- Changing workflow patterns → update relevant documentation
-
----
-
-## For Users Downloading This Template
-
-To customize this workspace to your own needs, fill in your context documents in `context/` and modify as needed. Then use `/create-plan` to plan out and `/implement` to execute any structural changes. This ensures everything stays in sync — especially CLAUDE.md, which must always reflect the current state of the workspace.
+If yes to any, update the relevant sections.
 
 ---
 
 ## Session Workflow
 
 1. **Start**: Run `/prime` to load context
-2. **Work**: Use commands or direct Claude with tasks
-3. **Plan changes**: Use `/create-plan` before significant additions
-4. **Execute**: Use `/implement` to execute plans
-5. **Maintain**: Claude updates CLAUDE.md and context/ as the workspace evolves
+2. **Check**: Review `context/module-roadmap.md` for next module to build
+3. **Plan**: Run `/create-plan [module-name]` to create an implementation plan
+4. **Execute**: Run `/implement [plan-path]` to build the module
+5. **Update**: Mark the module as Done in `context/module-roadmap.md`
+6. **Maintain**: Update CLAUDE.md if workspace structure changed
 
 ---
 
 ## Notes
 
-- Keep context minimal but sufficient — avoid bloat
-- Plans live in `plans/` with dated filenames for history
-- Outputs are organized by type/purpose in `outputs/`
-- Reference materials go in `reference/` for reuse
+- The `1. Archive/` directory contains the old failed Streamlit dashboard -- ignore it entirely
+- Each module in `modules/` has a corresponding layout in `2. Dashboard/layouts/`
+- Data files in `3. Data/` are gitignored (large JSON exports) but the folders are tracked
+- All API credentials go in `.env` -- never hardcode secrets
+- Google OAuth credentials file lives at `config/google-credentials.json` (gitignored)
