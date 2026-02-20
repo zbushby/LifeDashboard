@@ -1,7 +1,7 @@
 # Plan: Life Dashboard - Foundation, Context Setup and Project Architecture
 
 **Created:** 2026-02-20
-**Status:** Implemented
+**Status:** Draft
 **Request:** Define the Life Dashboard project in full, populate context files, update CLAUDE.md, and establish the project folder structure and module roadmap so every future Claude session starts with complete awareness.
 
 ---
@@ -75,9 +75,8 @@ LifeDashboard/
 | `context/tech-stack.md` | Tech stack decisions with rationale |
 | `context/module-roadmap.md` | Module build order and current status |
 | `modules/.gitkeep` | Placeholder - modules/ dir for data fetch/process scripts |
-| `.env.example` | Template showing all required environment variables (safe to commit) |
-| `.gitignore` | Gitignores .env and other sensitive files |
-| `config/.gitignore` | Gitignores google-credentials.json |
+| `config/config.example.yaml` | Template for API keys and secrets (safe to commit) |
+| `config/.gitignore` | Prevent accidental commit of real config.yaml |
 | `2. Dashboard/.gitkeep` | Placeholder - Dash app lives here |
 | `3. Data/apple-health/.gitkeep` | Apple Health JSON data |
 | `3. Data/strava/.gitkeep` | Strava API cache |
@@ -328,7 +327,7 @@ credentials need to be set up (can reuse Google Calendar OAuth project).
 **Data provided:** Renders full dashboard as HTML email, sends via Gmail SMTP
 **Connection method:** Gmail SMTP (free, app password)
 **Status:** Build last -- depends on all other modules
-**Schedule:** Auto-send every Sunday evening (configurable time in .env)
+**Schedule:** Auto-send every Sunday evening (configurable time in config.yaml)
 ```
 
 **Files affected:**
@@ -385,13 +384,13 @@ POST requests from the Health Auto Export iOS app and writes the JSON payload to
 - One service: `dashboard` (Python + Dash + APScheduler)
 - Volume mount: `3. Data/` directory mounted into container for data persistence
 - Network: host or bridge with port 8050 exposed
-- Environment: reads from `.env` file at project root (gitignored)
+- Environment: reads from `config/config.yaml` (gitignored)
 
-## Secrets: .env File
+## Secrets: YAML Config File
 
-- `.env` -- gitignored, contains all API keys and tokens
-- `.env.example` -- committed, shows all required variables with placeholder values
-- Loaded in Python via `python-dotenv`
+- `config/config.yaml` -- gitignored, contains all API keys and tokens
+- `config/config.example.yaml` -- committed, shows required keys with placeholder values
+- Loaded in Python via `pyyaml`
 
 ## Language: Python 3.11+
 
@@ -404,7 +403,7 @@ dash
 dash-bootstrap-components
 plotly
 apscheduler
-python-dotenv
+pyyaml
 requests
 google-api-python-client
 google-auth-httplib2
@@ -628,41 +627,45 @@ Create all necessary directories and placeholder files.
 - Create `3. Data/google-calendar/` with `.gitkeep`
 - Create `3. Data/dreaming-spanish/` with `.gitkeep`
 - Create `modules/` directory with `.gitkeep`
-- Create `config/` directory with `.gitignore` containing `google-credentials.json`
-- Create `.env.example` at project root (see content below)
-- Add `.env` to the root `.gitignore` (create `.gitignore` if it doesn't exist)
+- Create `config/` directory
+- Create `config/config.example.yaml` (see content below)
+- Create `config/.gitignore` containing just the line: `config.yaml`
 - Confirm `2. Dashboard/` directory exists
 
-**`.env.example` content:**
-```
-# Life Dashboard - Environment Variables
-# Copy this file to .env and fill in your real values.
-# .env is gitignored -- never commit real credentials.
+**`config/config.example.yaml` content:**
+```yaml
+# Life Dashboard Configuration
+# Copy this file to config.yaml and fill in your real values.
+# config.yaml is gitignored -- never commit real credentials.
 
-# Up Bank
-UP_BANK_API_TOKEN=
+up_bank:
+  api_token: "YOUR_UP_BANK_API_TOKEN"
 
-# Google (Calendar + Sheets -- shared OAuth project)
-# google-credentials.json is stored at config/google-credentials.json (gitignored)
-GOOGLE_BJJ_CALENDAR_ID=
-GOOGLE_BIRTHDAYS_CALENDAR_ID=
-GOOGLE_INVESTMENTS_SHEET_ID=
+google:
+  # OAuth2 credentials from Google Cloud Console
+  # Used for: Google Calendar API + Google Sheets API
+  credentials_file: "config/google-credentials.json"
+  calendar:
+    bjj_calendar_id: "YOUR_BJJ_CALENDAR_ID"
+    birthdays_calendar_id: "YOUR_BIRTHDAYS_CALENDAR_ID"
+  sheets:
+    investments_sheet_id: "YOUR_GOOGLE_SHEET_ID"
 
-# Strava
-STRAVA_CLIENT_ID=
-STRAVA_CLIENT_SECRET=
-STRAVA_REFRESH_TOKEN=
+strava:
+  client_id: "YOUR_STRAVA_CLIENT_ID"
+  client_secret: "YOUR_STRAVA_CLIENT_SECRET"
+  refresh_token: "YOUR_STRAVA_REFRESH_TOKEN"
 
-# Email (Gmail)
-GMAIL_ADDRESS=
-GMAIL_APP_PASSWORD=
-EMAIL_SEND_TO=
-EMAIL_SEND_DAY=sunday
-EMAIL_SEND_TIME=19:00
+email:
+  gmail_address: "YOUR_GMAIL_ADDRESS"
+  gmail_app_password: "YOUR_GMAIL_APP_PASSWORD"
+  send_to: "YOUR_EMAIL_ADDRESS"
+  send_day: "sunday"
+  send_time: "19:00"
 
-# Dashboard
-DASHBOARD_PORT=8050
-DASHBOARD_HOST=0.0.0.0
+dashboard:
+  port: 8050
+  host: "0.0.0.0"
 ```
 
 **Files affected:**
@@ -673,9 +676,8 @@ DASHBOARD_HOST=0.0.0.0
 - `3. Data/google-calendar/.gitkeep` (create)
 - `3. Data/dreaming-spanish/.gitkeep` (create)
 - `modules/.gitkeep` (create)
-- `config/.gitignore` (create -- gitignores google-credentials.json)
-- `.env.example` (create at project root)
-- `.gitignore` (create/update at project root -- add .env)
+- `config/config.example.yaml` (create)
+- `config/.gitignore` (create)
 
 ---
 
@@ -723,9 +725,8 @@ DASHBOARD_HOST=0.0.0.0
 - [ ] `context/strategy.md` deleted
 - [ ] `context/current-data.md` deleted
 - [ ] `CLAUDE.md` updated to describe Life Dashboard (not generic template)
-- [ ] `.env.example` created at project root with all required variable names
-- [ ] `.gitignore` at project root contains `.env`
-- [ ] `config/.gitignore` created containing `google-credentials.json`
+- [ ] `config/config.example.yaml` created with all required API key placeholders
+- [ ] `config/.gitignore` created containing `config.yaml`
 - [ ] All `3. Data/` subfolders created: apple-health, finances, investments, strava, google-calendar, dreaming-spanish
 - [ ] `modules/` directory created
 - [ ] Running `/prime` in a new session produces a meaningful Life Dashboard summary
@@ -752,33 +753,3 @@ The implementation is complete when:
 - Strava OAuth requires a one-time browser flow to get the initial refresh token. This is documented in the Strava module plan.
 - Health Auto Export free tier: confirm during Module 1 which metrics are available on free vs paid tier.
 
----
-
-## Implementation Notes
-
-**Implemented:** 2026-02-20
-
-### Summary
-
-Context files were written during the planning session (personal-info, project, data-sources,
-tech-stack, module-roadmap). During implementation:
-- Renamed 3. Data/Apple Health/ -> 3. Data/apple-health/
-- Renamed 3. Data/Finances Up Bank/ -> 3. Data/finances/
-- Created all missing 3. Data/ subfolders with .gitkeep
-- Created modules/ with .gitkeep
-- Created config/ with .gitignore (gitignores google-credentials.json)
-- Created .env.example at project root with all required variable names
-- Created .gitignore at project root (gitignores .env, data exports, __pycache__)
-- Updated CLAUDE.md to describe the Life Dashboard project specifically
-- Deleted old empty template files (business-info.md, strategy.md, current-data.md)
-
-### Deviations from Plan
-
-- Switched from config/config.yaml to .env / .env.example approach (simpler, more standard)
-- CLAUDE.md was fully rewritten rather than section-by-section patching (cleaner result)
-- Design decision #13 in the plan still mentions config.yaml -- minor inconsistency in the
-  plan document only, actual implementation uses .env correctly
-
-### Issues Encountered
-
-None.
