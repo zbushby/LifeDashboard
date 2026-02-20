@@ -1,0 +1,47 @@
+/* Life Dashboard - Custom Styles */
+/* Applied on top of DARKLY Bootstrap theme */
+
+body {
+    background-color: #0d1117;
+}
+
+.card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+    background-color: #21262d;
+    border-bottom: 1px solid #30363d;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 0.75rem 1.25rem;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8b949e;
+}
+
+.placeholder-msg {
+    color: #484f58;
+    text-align: center;
+    padding: 2.5rem 1rem;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+h1 {
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+hr {
+    border-color: #30363d;
+    opacity: 1;
+}

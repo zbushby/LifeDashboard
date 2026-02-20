@@ -12,8 +12,8 @@ dashboard view together. A module is only "Done" when real data is visible on sc
 
 | # | Module | Data Source | Status | Plan File |
 |---|--------|-------------|--------|-----------|
-| 0 | Foundation + Dash skeleton | Docker + Dash app shell | Not started | plans/2026-02-20-foundation-and-context-setup.md |
-| 1 | Apple Health | Health Auto Export -> webhook | Not started | -- |
+| 0 | Foundation + Dash skeleton | Docker + Dash app shell | Done | plans/2026-02-20-docker-dash-skeleton.md |
+| 1 | Apple Health | Health Auto Export -> webhook | Done | plans/2026-02-20-apple-health-module.md |
 | 2 | Finances | Up Bank API | Not started | -- |
 | 3 | Google Calendar | Google Calendar API | Not started | -- |
 | 4 | Gym Volume | Strava API (Hevy auto-posts) | Not started | -- |
@@ -41,22 +41,54 @@ A module is complete when ALL of the following are true:
 | Context files populated | Done |
 | CLAUDE.md updated | Done |
 | Project folder structure created | Done |
-| .env.example created | Not started |
-| Docker Compose file created | Not started |
-| Dash app shell created (app.py) | Not started |
-| Dark theme applied and dashboard loads | Not started |
+| .env.example created | Done |
+| Docker Compose file created | Done |
+| Dash app shell created (app.py) | Done |
+| Dark theme applied and dashboard loads | Done |
 
 ---
 
 ## Completed Modules
 
-None yet.
+- **Module 0 (Foundation)**: Context files, folder structure, Docker Compose, Dash skeleton with DARKLY theme and 7 placeholder cards.
+- **Module 1 (Apple Health)**: Data parser (`modules/apple_health.py`), Health/Sleep/Learning layouts with real Plotly charts, `serve_layout()` for fresh data on page refresh.
+
+---
+
+## Apple Health Checklist (Module 1)
+
+| Task | Status |
+|------|--------|
+| modules/apple_health.py created | Done |
+| layouts/health.py: weight + BF stats + charts | Done |
+| layouts/sleep.py: sleep avg + chart | Done |
+| layouts/learning.py: study hours panel | Done |
+| serve_layout() function in app.py | Done |
+| Sample data tested locally | Done |
+| CLAUDE.md updated (modules location) | Done |
+
+### iPhone Setup Required (before real data appears)
+1. Install "Health Auto Export - JSON+CSV" from App Store (free)
+2. Open app → Configure → add these metrics:
+   - Body Mass
+   - Body Fat Percentage
+   - Lean Body Mass
+   - Dietary Energy Consumed
+   - Sleep Analysis
+   - Mindful Session
+3. Set Export Format: JSON
+4. Set Auto-Export: Daily
+5. Set Webhook URL: `http://[proxmox-ip]:8050/api/health-export`
+6. Tap "Export Now" once to send a test payload and verify data appears
 
 ---
 
 ## Next Steps
 
-1. Run `/implement plans/2026-02-20-foundation-and-context-setup.md` to finish
-   the foundation (folder structure, .env.example, etc.)
-2. Run `/create-plan docker-dash-skeleton` to plan the Docker + Dash app shell
-3. Run `/create-plan apple-health-module` to plan Module 1
+Deploy skeleton + Apple Health module to Proxmox:
+```
+docker compose up --build
+```
+Then configure iPhone app with Proxmox IP.
+
+Run `/create-plan finances-module` to plan Module 2.

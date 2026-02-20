@@ -58,7 +58,8 @@ LifeDashboard/
     tech-stack.md             - Tech stack decisions
     module-roadmap.md         - Build order and status (update after each module)
   plans/                      - Implementation plans (one per module)
-  2. Dashboard/               - Dash app (app.py, layouts/, assets/)
+  2. Dashboard/               - Dash app (app.py, layouts/, modules/, assets/)
+    modules/                  - Data processing modules (inside Docker build context)
   3. Data/                    - Data files written by sync scripts
     apple-health/             - JSON from Health Auto Export webhook
     finances/                 - Up Bank transaction cache
@@ -66,7 +67,7 @@ LifeDashboard/
     strava/                   - Strava activity cache
     google-calendar/          - Calendar events cache
     dreaming-spanish/         - Dreaming Spanish scraped data
-  modules/                    - Data fetch and processing scripts (one per source)
+  modules/                    - Reference scripts only (not used by live app)
   config/                     - Google OAuth credentials (gitignored)
   scripts/                    - Utility scripts
   1. Archive/                 - Old code, ignore entirely
@@ -133,7 +134,7 @@ If yes to any, update the relevant sections.
 ## Notes
 
 - The `1. Archive/` directory contains the old failed Streamlit dashboard -- ignore it entirely
-- Each module in `modules/` has a corresponding layout in `2. Dashboard/layouts/`
+- Data processing modules live in `2. Dashboard/modules/` (inside Docker build context), not the top-level `modules/`
 - Data files in `3. Data/` are gitignored (large JSON exports) but the folders are tracked
 - All API credentials go in `.env` -- never hardcode secrets
 - Google OAuth credentials file lives at `config/google-credentials.json` (gitignored)

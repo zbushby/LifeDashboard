@@ -1,0 +1,15 @@
+services:
+  dashboard:
+    build:
+      context: "./2. Dashboard"
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    volumes:
+      - "./3. Data:/data"
+      - "./config:/config"
+    env_file:
+      - .env
+    environment:
+      - DATA_DIR=/data
+    restart: unless-stopped

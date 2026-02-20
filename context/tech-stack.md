@@ -138,13 +138,14 @@ LifeDashboard/
       calendar_events.py      - Birthdays dashboard section
       learning.py             - Study + Dreaming Spanish section
       investments.py          - Investments dashboard section
-  modules/
-    apple_health.py           - Parse Health Auto Export JSON -> dataframes
-    finances.py               - Up Bank API -> spending data
-    calendar_sync.py          - Google Calendar API -> events
-    strava.py                 - Strava API -> parse Hevy posts -> gym volume
-    investments.py            - Google Sheets API -> portfolio data
-    dreaming_spanish.py       - Scraper -> DS progress
+    modules/                  - Data processing modules (inside Docker build context)
+      apple_health.py         - Parse Health Auto Export JSON -> dataframes
+      finances.py             - Up Bank API -> spending data (future)
+      calendar_sync.py        - Google Calendar API -> events (future)
+      strava.py               - Strava API -> parse Hevy posts -> gym volume (future)
+      investments.py          - Google Sheets API -> portfolio data (future)
+      dreaming_spanish.py     - Scraper -> DS progress (future)
+  modules/                    - Reference scripts only (not used by live app)
   3. Data/
     apple-health/             - JSON files from Health Auto Export
     finances/                 - Up Bank transaction cache
